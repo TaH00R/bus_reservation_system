@@ -1,8 +1,14 @@
+import 'package:bus_reservation_system/pages/search_result_page.dart';
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
+import 'package:bus_reservation_system/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_reservation_system/pages/search_page.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create:(_)=>AppDataProvider(),
+    child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +25,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: SearchPage(),
+      routes:{
+        routeNameHome : (context)=> const SearchPage(),
+        routeNameSearchResultPage : (context)=> const SearchResultPage(),
+      }
     );
   }
 }

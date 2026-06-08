@@ -1,7 +1,9 @@
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
 import 'package:bus_reservation_system/utils/constants.dart';
 import 'package:bus_reservation_system/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -13,6 +15,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String? fromCity, toCity;
   DateTime? departureDate;
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +32,7 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.green[700],
       ),
       body: Form(
+        key: _formKey,
         child: Center(child: ListView(
           shrinkWrap: true,
           padding: const EdgeInsets.all(8),
@@ -80,8 +85,19 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 Text(': ${departureDate != null ? getFormattedDate(departureDate!) : 'No date selected'}'),
               ]
-            )
-                    ]
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: _search,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[700],
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                ),
+                child: const Text('Search Buses'),
+              ),
+            ),
+          ]
         ),))
     );
   }
@@ -95,6 +111,20 @@ class _SearchPageState extends State<SearchPage> {
     if (selectedDate != null) {
       setState(() {
         departureDate = selectedDate;
+      });
+    }
+  }
+
+  void _search() {
+      if(departureDate == null){
+        showMessage(context, emptyDateErrMessage);
+        return;
+      }
+    if(_formKey.currentState!.validate()){
+      Provider.of<AppDataProvider>(context, listen:false).
+      getRouteByCityFromAndCityTo(fromCity!, toCity!).
+      then((route){
+        Navigator.pushNamed(context,routeNameSearchResultPage, arguments:[route,getFormattedDate(departureDate!)]);
       });
     }
   }
