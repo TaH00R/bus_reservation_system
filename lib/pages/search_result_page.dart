@@ -231,7 +231,7 @@ class ScheduleItemView extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                // Handle book now button press
+               Navigator.pushNamed(context, routeNameSeatPlanPage, arguments: [schedule, date]);
               },
               child: const Text('Book Now'),
             ),
