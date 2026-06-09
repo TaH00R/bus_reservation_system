@@ -73,18 +73,24 @@ class _SeatPagePlanState extends State<SeatPagePlan> {
               )
             )),
 
-            Expanded(child: 
-            SingleChildScrollView(
-              child : SeatPlanView(
-                onSeatSelected: (value, seat){
-                },
-                totalSeatBooked: totalBookedSeats,
-                bookedSeatNumbers : bookedSeatNumbers,
-                totalSeats: schedule.bus.totalSeat,
-                isBusinessClass: schedule.bus.busType == busTypeACBusiness
-              )
-            ),),
-
+            Expanded(
+              child: SingleChildScrollView(
+                child : Column(
+                  children: [
+                    SeatPlanView(
+                      onSeatSelected: (value, seat){
+                        if(value) {
+                          selectedSeats.add(seat);
+                        } else {
+                          selectedSeats.remove(seat);
+                        }
+                        selectedSeatNotifier.value = selectedSeats.join(', ');
+                      },
+                      totalSeatBooked: totalBookedSeats,
+                      bookedSeatNumbers : bookedSeatNumbers,
+                      totalSeats: schedule.bus.totalSeat,
+                      isBusinessClass: schedule.bus.busType == busTypeACBusiness
+                    ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
@@ -97,6 +103,11 @@ class _SeatPagePlanState extends State<SeatPagePlan> {
               }, 
               child: const Text('Book Now')
             )
+                  ],
+                )
+              ),
+            ),
+
         ],)
       ),
     );
