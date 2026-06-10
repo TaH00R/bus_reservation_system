@@ -1,10 +1,12 @@
 import 'package:bus_reservation_system/customwidgets/seat_plan_view.dart';
 import 'package:bus_reservation_system/models/bus_schedule.dart';
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
 import 'package:bus_reservation_system/utils/colors.dart';
 import 'package:bus_reservation_system/utils/constants.dart';
 import 'package:bus_reservation_system/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class SeatPagePlan extends StatefulWidget {
   const SeatPagePlan({super.key});
@@ -28,7 +30,21 @@ class _SeatPagePlanState extends State<SeatPagePlan> {
     final argList = ModalRoute.of(context)!.settings.arguments as List;
     schedule = argList[0];
     departureDate = argList[1];
+    _getData();
     super.didChangeDependencies();
+  }
+
+  _getData() async{
+   final reservationList = await Provider.of<AppDataProvider>(context, listen: false)
+    .getReservationsByScheduleAndDepartureDate(schedule.scheduleId!, departureDate);
+
+    List<String> bookedSeats = [];
+    for(final reservation in reservationList){
+      totalBookedSeats += reservation.totalSeatBooked;
+      bookedSeats.add(reservation.seatNumbers);
+        }
+        bookedSeatNumbers = bookedSeats.join(', ');
+
   }
 
   @override
@@ -100,6 +116,9 @@ class _SeatPagePlanState extends State<SeatPagePlan> {
                   showMessage(context, 'Please select at least one seat');
                   return;
                 }
+                Navigator.pushNamed(context, routeNameBookingConfirmationPage, 
+                arguments: [departureDate, schedule, selectedSeatNotifier.value, selectedSeats.length]);
+
               }, 
               child: const Text('Book Now')
             )

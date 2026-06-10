@@ -1,5 +1,6 @@
 import 'package:bus_reservation_system/datasource/data_source.dart';
 import 'package:bus_reservation_system/datasource/dummy_data_source.dart';
+import 'package:bus_reservation_system/models/bus_reservation.dart';
 import 'package:bus_reservation_system/models/bus_route.dart';
 import 'package:bus_reservation_system/models/bus_schedule.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,11 @@ class AppDataProvider extends ChangeNotifier{
     return _scheduleList;
   }
 
-
   Future<BusRoute?> getRouteByCityFromAndCityTo(String cityFrom, String cityTo) {
     return _dataSource.getRouteByCityFromAndCityTo(cityFrom, cityTo);
+  }
+
+  Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(int scheduleId, String departureDate){
+    return _dataSource.getReservationsByScheduleAndDepartureDate(scheduleId, departureDate);
   }
 }
