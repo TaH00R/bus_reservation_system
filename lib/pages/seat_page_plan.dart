@@ -18,116 +18,210 @@ class SeatPagePlan extends StatefulWidget {
 class _SeatPagePlanState extends State<SeatPagePlan> {
   late BusSchedule schedule;
   late String departureDate;
+
   int totalBookedSeats = 0;
   String bookedSeatNumbers = '';
+
   List<String> selectedSeats = [];
-  bool isFirst = true;
+
   bool isDataLoading = true;
-  ValueNotifier<String> selectedSeatNotifier = ValueNotifier('NONE');
+  bool _initialized = false;
+
+  ValueNotifier<String> selectedSeatNotifier =
+      ValueNotifier<String>('NONE');
 
   @override
   void didChangeDependencies() {
-    final argList = ModalRoute.of(context)!.settings.arguments as List;
-    schedule = argList[0];
-    departureDate = argList[1];
-    _getData();
     super.didChangeDependencies();
+
+    if (!_initialized) {
+      final argList = ModalRoute.of(context)!.settings.arguments as List;
+
+      schedule = argList[0];
+      departureDate = argList[1];
+
+      _initialized = true;
+      _getData();
+    }
   }
 
-  _getData() async{
-   final reservationList = await Provider.of<AppDataProvider>(context, listen: false)
-    .getReservationsByScheduleAndDepartureDate(schedule.scheduleId!, departureDate);
+  Future<void> _getData() async {
+    final reservationList =
+        await Provider.of<AppDataProvider>(
+          context,
+          listen: false,
+        ).getReservationsByScheduleAndDepartureDate(
+          schedule.scheduleId!,
+          departureDate,
+        );
 
+    int bookedCount = 0;
     List<String> bookedSeats = [];
-    for(final reservation in reservationList){
-      totalBookedSeats += reservation.totalSeatBooked;
-      bookedSeats.add(reservation.seatNumbers);
-        }
-        bookedSeatNumbers = bookedSeats.join(', ');
 
+    for (final reservation in reservationList) {
+      bookedCount += reservation.totalSeatBooked;
+      bookedSeats.add(reservation.seatNumbers);
+    }
+
+    setState(() {
+      totalBookedSeats = bookedCount;
+      bookedSeatNumbers = bookedSeats.join(', ');
+      isDataLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    selectedSeatNotifier.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      title: Text('SEAT PLAN', style: GoogleFonts.josefinSans()),
+        title: Text(
+          'SEAT PLAN',
+          style: GoogleFonts.josefinSans(),
+        ),
         centerTitle: true,
       ),
       body: Center(
-        child: Column(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(children: [
-                Container(
-                  width: 20,
-                  height: 20,
-                  color: seatBookedColor
-                ),
-                const SizedBox(width: 6),
-                Text('BOOKED')
-              ],),
-              const SizedBox(width: 16),
-              Row(children: [
-                Container(
-                  width: 20,
-                  height: 20,
-                  color: seatAvailableColor
-                ),
-                const SizedBox(width: 6),
-                Text('AVAILABLE')
-              ],)
-          ],),
-          const SizedBox(height: 12),
-          ValueListenableBuilder(
-            valueListenable: selectedSeatNotifier, 
-            builder: (context, value, _)=> Text(
-              'SELECTED : $value',
-              style: const TextStyle(
-                fontSize: 16,
-              )
-            )),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
 
-            Expanded(
-              child: SingleChildScrollView(
-                child : Column(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
                   children: [
-                    SeatPlanView(
-                      onSeatSelected: (value, seat){
-                        if(value) {
-                          selectedSeats.add(seat);
-                        } else {
-                          selectedSeats.remove(seat);
-                        }
-                        selectedSeatNotifier.value = selectedSeats.join(', ');
-                      },
-                      totalSeatBooked: totalBookedSeats,
-                      bookedSeatNumbers : bookedSeatNumbers,
-                      totalSeats: schedule.bus.totalSeat,
-                      isBusinessClass: schedule.bus.busType == busTypeACBusiness
+                    Container(
+                      width: 20,
+                      height: 20,
+                      color: seatBookedColor,
                     ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[700],
-                foregroundColor: Colors.white,),
-              onPressed: (){
-                if(selectedSeats.isEmpty){
-                  showMessage(context, 'Please select at least one seat');
-                  return;
-                }
-                Navigator.pushNamed(context, routeNameBookingConfirmationPage, 
-                arguments: [departureDate, schedule, selectedSeatNotifier.value, selectedSeats.length]);
-
-              }, 
-              child: const Text('Book Now')
-            )
+                    const SizedBox(width: 6),
+                    const Text('BOOKED'),
                   ],
-                )
-              ),
+                ),
+
+                const SizedBox(width: 16),
+
+                Row(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      color: seatAvailableColor,
+                    ),
+                    const SizedBox(width: 6),
+                    const Text('AVAILABLE'),
+                  ],
+                ),
+              ],
             ),
 
-        ],)
+            const SizedBox(height: 16),
+
+            ValueListenableBuilder<String>(
+              valueListenable: selectedSeatNotifier,
+              builder: (context, value, child) {
+                return Text(
+                  'SELECTED : $value',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 10),
+
+            if (isDataLoading)
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SeatPlanView(
+                        selectedSeats: selectedSeats,
+                        totalSeatBooked: totalBookedSeats,
+                        bookedSeatNumbers: bookedSeatNumbers,
+                        totalSeats: schedule.bus.totalSeat,
+                        isBusinessClass:
+                            schedule.bus.busType ==
+                            busTypeACBusiness,
+                        onSeatSelected: (
+                          bool value,
+                          String seat,
+                        ) {
+                          setState(() {
+                            if (value) {
+                              if (!selectedSeats.contains(seat)) {
+                                selectedSeats.add(seat);
+                              }
+                            } else {
+                              selectedSeats.remove(seat);
+                            }
+
+                            selectedSeatNotifier.value =
+                                selectedSeats.isEmpty
+                                    ? 'NONE'
+                                    : selectedSeats.join(', ');
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[700],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 12,
+                          ),
+                        ),
+                        onPressed: () {
+                          if (selectedSeats.isEmpty) {
+                            showMessage(
+                              context,
+                              'Please select at least one seat',
+                            );
+                            return;
+                          }
+
+                          Navigator.pushNamed(
+                            context,
+                            routeNameBookingConfirmationPage,
+                            arguments: [
+                              departureDate,
+                              schedule,
+                              selectedSeats.join(', '),
+                              selectedSeats.length,
+                            ],
+                          );
+                        },
+                        child: const Text(
+                          'Book Now',
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

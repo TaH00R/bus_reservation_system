@@ -3,6 +3,7 @@ import 'package:bus_reservation_system/datasource/dummy_data_source.dart';
 import 'package:bus_reservation_system/models/bus_reservation.dart';
 import 'package:bus_reservation_system/models/bus_route.dart';
 import 'package:bus_reservation_system/models/bus_schedule.dart';
+import 'package:bus_reservation_system/models/response_model.dart';
 import 'package:flutter/material.dart';
 
 class AppDataProvider extends ChangeNotifier{
@@ -23,4 +24,7 @@ class AppDataProvider extends ChangeNotifier{
   Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(int scheduleId, String departureDate){
     return _dataSource.getReservationsByScheduleAndDepartureDate(scheduleId, departureDate);
   }
+
+  Future<ResponseModel> addReservation(BusReservation reservation){
+    return _dataSource.addReservation(reservation);}
 }

@@ -7,6 +7,7 @@ class SeatPlanView extends StatelessWidget {
   final String bookedSeatNumbers;
   final int totalSeatBooked;
   final bool isBusinessClass;
+  final List<String> selectedSeats;
   final Function(bool, String) onSeatSelected;
 
   const SeatPlanView({
@@ -15,6 +16,7 @@ class SeatPlanView extends StatelessWidget {
     required this.bookedSeatNumbers,
     required this.totalSeatBooked,
     required this.isBusinessClass,
+    required this.selectedSeats,
     required this.onSeatSelected,
   });
 
@@ -67,7 +69,12 @@ class SeatPlanView extends StatelessWidget {
     }
 
     final List<String> bookedSeatsList =
-        bookedSeatNumbers.isEmpty ? [] : bookedSeatNumbers.split(',');
+        bookedSeatNumbers.isEmpty
+            ? []
+            : bookedSeatNumbers
+                .split(',')
+                .map((e) => e.trim())
+                .toList();
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -91,7 +98,7 @@ class SeatPlanView extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: 14,  
+              horizontal: 14,
               vertical: 10,
             ),
             decoration: BoxDecoration(
@@ -114,9 +121,7 @@ class SeatPlanView extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 20),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -137,9 +142,7 @@ class SeatPlanView extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 24),
-
           Column(
             children: [
               for (int i = 0; i < seatArrangement.length; i++)
@@ -152,8 +155,12 @@ class SeatPlanView extends StatelessWidget {
                           j < seatArrangement[i].length;
                           j++) ...[
                         Seat(
+                          key: ValueKey(seatArrangement[i][j]),
                           label: seatArrangement[i][j],
                           isBooked: bookedSeatsList.contains(
+                            seatArrangement[i][j],
+                          ),
+                          isSelected: selectedSeats.contains(
                             seatArrangement[i][j],
                           ),
                           onSelect: (bool isSelected) {
@@ -163,10 +170,8 @@ class SeatPlanView extends StatelessWidget {
                             );
                           },
                         ),
-
                         if (isBusinessClass && j == 0)
                           const SizedBox(width: 28),
-
                         if (!isBusinessClass && j == 1)
                           const SizedBox(width: 28),
                       ]
@@ -181,43 +186,34 @@ class SeatPlanView extends StatelessWidget {
   }
 }
 
-class Seat extends StatefulWidget {
+class Seat extends StatelessWidget {
   final String label;
   final bool isBooked;
+  final bool isSelected;
   final Function(bool) onSelect;
 
   const Seat({
     super.key,
     required this.label,
     required this.isBooked,
+    required this.isSelected,
     required this.onSelect,
   });
 
   @override
-  State<Seat> createState() => _SeatState();
-}
-
-class _SeatState extends State<Seat> {
-  bool selected = false;
-
-  @override
   Widget build(BuildContext context) {
-    final Color seatColor = widget.isBooked
+    final Color seatColor = isBooked
         ? seatBookedColor
-        : selected
+        : isSelected
             ? seatSelectedColor
             : Colors.white;
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: widget.isBooked
+      onTap: isBooked
           ? null
           : () {
-              setState(() {
-                selected = !selected;
-              });
-
-              widget.onSelect(selected);
+              onSelect(!isSelected);
             },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -229,9 +225,9 @@ class _SeatState extends State<Seat> {
           color: seatColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: widget.isBooked
+            color: isBooked
                 ? Colors.red.shade300
-                : selected
+                : isSelected
                     ? seatSelectedColor
                     : Colors.grey.shade300,
             width: 1.5,
@@ -250,23 +246,19 @@ class _SeatState extends State<Seat> {
             Icon(
               Icons.event_seat_rounded,
               size: 18,
-              color: widget.isBooked
+              color: isBooked || isSelected
                   ? Colors.white
-                  : selected
-                      ? Colors.white
-                      : Colors.grey.shade700,
+                  : Colors.grey.shade700,
             ),
             const SizedBox(height: 2),
             Text(
-              widget.label,
+              label,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: widget.isBooked
+                color: isBooked || isSelected
                     ? Colors.white
-                    : selected
-                        ? Colors.white
-                        : Colors.black87,
+                    : Colors.black87,
               ),
             ),
           ],

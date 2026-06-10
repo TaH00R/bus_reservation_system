@@ -1,6 +1,12 @@
+import 'package:bus_reservation_system/models/bus_reservation.dart';
 import 'package:bus_reservation_system/models/bus_schedule.dart';
+import 'package:bus_reservation_system/models/customer.dart';
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
+import 'package:bus_reservation_system/utils/constants.dart';
+import 'package:bus_reservation_system/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class BookingConfirmationPage extends StatefulWidget {
   const BookingConfirmationPage({super.key});
@@ -331,7 +337,33 @@ class _BookingConfirmationPageState extends State<BookingConfirmationPage> {
 
   void _confirmBooking() {
     if (_formKey.currentState!.validate()) {
-      // Proceed with booking confirmation logic
+      final customer = Customer(
+        customerName: nameController.text, 
+        mobile: mobileController.text,
+        email: emailController.text
+      );
+      final reservationData = BusReservation(
+          customer: customer,
+          busSchedule: schedule,
+          timestamp: DateTime.now().millisecondsSinceEpoch,
+          departureDate: departureDate,
+          totalSeatBooked: totalSeatsBooked,
+          seatNumbers: seatNumbers,
+          reservationStatus: reservationActive,
+          totalPrice: schedule.ticketPrice * totalSeatsBooked);
+    Provider.of<AppDataProvider>(context, listen:false).addReservation(reservationData).
+    then((response){
+      if(response.responseStatus == ResponseStatus.SAVED){
+        showMessage(context, response.message);
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+      else{
+        showMessage(context, 'Failed to confirm booking. Please try again.');
+      }
+    }).
+    catchError((error){
+      showMessage(context, 'Failed to confirm booking. Please try again.');
+    });
     }
   }
 
