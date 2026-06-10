@@ -20,13 +20,68 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.green[700],
+                ),
+                child: Center(
+                  child: Text(
+                    'Bus Reservation System',
+                    style: GoogleFonts.chelseaMarket(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.bus_alert),
+                title: const Text('ADD BUS'),
+                onTap: () {
+                  Navigator.pushNamed(context, routeNameAddBusPage);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.route),
+                title: const Text('ADD ROUTE'),
+                onTap: () {
+                  Navigator.pushNamed(context, routeNameAddRoutePage);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.schedule),
+                title: const Text('ADD SCHEDULE'),
+                onTap: () {
+                  Navigator.pushNamed(context, routeNameAddSchedulePage);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.book_online),
+                title: const Text('VIEW RESERVATIONS'),
+                onTap: () {
+                  Navigator.pushNamed(context, routeNameHome);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.admin_panel_settings),
+                title: const Text('ADMIN LOGIN'),
+                onTap: () {
+                  Navigator.pushNamed(context, routeNameLoginPage);
+                },
+              ),
+            ],
+          )
+        ),
+        
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'SEARCH BUSES',
-            style: GoogleFonts.chelseaMarket(
-              color: Colors.white,
-            ),
+        centerTitle: true,
+        title: Text(
+          'SEARCH BUSES',
+          style: GoogleFonts.chelseaMarket(
+            color: Colors.white,
           ),
         ),
         backgroundColor: Colors.green[700],
