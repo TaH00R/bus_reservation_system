@@ -62,7 +62,7 @@ class _SearchPageState extends State<SearchPage> {
                 leading: const Icon(Icons.book_online),
                 title: const Text('VIEW RESERVATIONS'),
                 onTap: () {
-                  Navigator.pushNamed(context, routeNameHome);
+                  Navigator.pushNamed(context, routeNameReservationPage);
                 },
               ),
               ListTile(

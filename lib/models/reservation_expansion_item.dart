@@ -1,0 +1,45 @@
+import 'package:bus_reservation_system/models/bus_schedule.dart';
+import 'package:bus_reservation_system/models/customer.dart';
+
+class ReservationExpansionItem {
+  ReservationExpansionHeader header;
+  ReservationExpansionBody body;
+  bool isExpanded;
+
+  ReservationExpansionItem({
+    required this.header,
+    required this.body,
+    this.isExpanded = false,
+  });
+
+}
+
+class ReservationExpansionHeader {
+  int? reseervationId;
+  String departureDate;
+  BusSchedule schedule;
+  int timestamp;
+  String reservationStatus;
+
+  ReservationExpansionHeader({
+    this.reseervationId,
+    required this.departureDate,
+    required this.schedule,
+    required this.timestamp,
+    required this.reservationStatus,
+  });
+}
+
+class ReservationExpansionBody{
+  Customer customer;
+  int totalSeatBooked;
+  String seatNumbers;
+  int totalPrice;
+
+  ReservationExpansionBody({
+    required this.customer,
+    required this.totalSeatBooked,
+    required this.seatNumbers,
+    required this.totalPrice,
+  });
+}
