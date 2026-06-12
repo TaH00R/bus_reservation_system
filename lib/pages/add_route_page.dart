@@ -15,89 +15,190 @@ class _AddRoutePageState extends State<AddRoutePage> {
   String? from, to;
   final distanceController = TextEditingController();
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Route'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Center(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            shrinkWrap: true,
-            children: [
-              DropdownButtonFormField<String>(
-                onChanged: (value) {
-                  setState(() {
-                    from = value;
-                  });
-                },
-                isExpanded: true,
-                value: from,
-                hint: const Text('From'),
-                items: cities
-                    .map((e) => DropdownMenuItem<String>(
-                  value: e,
-                  child: Text(e),
-                ))
-                    .toList(),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              DropdownButtonFormField<String>(
-                onChanged: (value) {
-                  setState(() {
-                    to = value;
-                  });
-                },
-                isExpanded: true,
-                value: to,
-                hint: const Text('To'),
-                items: cities
-                    .map((e) => DropdownMenuItem<String>(
-                  value: e,
-                  child: Text(e),
-                ))
-                    .toList(),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: distanceController,
-                decoration: const InputDecoration(
-                  hintText: 'Distance in Kilometer',
-                  filled: true,
-                  prefixIcon: Icon(Icons.social_distance_outlined),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return emptyFieldErrMessage;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Center(
-                child: SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
-                    onPressed: addRoute,
-                    child: const Text('ADD ROUTE'),
-                  ),
-                ),
-              ),
-            ],
-          ),
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      centerTitle: true,
+      title: const Text(
+        'Add Route',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
       ),
-    );
-  }
+    ),
+    body: Form(
+      key: _formKey,
+      child: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.route,
+                    size: 60,
+                    color: Colors.green,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    'Route Information',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  DropdownButtonFormField<String>(
+                    value: from,
+                    isExpanded: true,
+                    borderRadius: BorderRadius.circular(15),
+                    decoration: InputDecoration(
+                      labelText: 'From',
+                      prefixIcon: const Icon(
+                        Icons.location_on_outlined,
+                      ),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(15),
+                      ),
+                    ),
+                    hint: const Text('Select Departure City'),
+                    items: cities
+                        .map(
+                          (e) => DropdownMenuItem<String>(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        from = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a departure city';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  DropdownButtonFormField<String>(
+                    value: to,
+                    isExpanded: true,
+                    borderRadius: BorderRadius.circular(15),
+                    decoration: InputDecoration(
+                      labelText: 'To',
+                      prefixIcon: const Icon(
+                        Icons.flag_outlined,
+                      ),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(15),
+                      ),
+                    ),
+                    hint: const Text('Select Destination City'),
+                    items: cities
+                        .map(
+                          (e) => DropdownMenuItem<String>(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        to = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a destination city';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: distanceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Distance (KM)',
+                      prefixIcon: const Icon(
+                        Icons.social_distance_outlined,
+                      ),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return emptyFieldErrMessage;
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton.icon(
+                      onPressed: addRoute,
+                      icon: const Icon(
+                        Icons.add_road,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        'ADD ROUTE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   void addRoute() {
     if (_formKey.currentState!.validate()) {
@@ -108,6 +209,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
         cityTo: to!,
         distanceInKm: double.parse(distanceController.text),
       );
+      TempDB.tableRoute.add(route);
+      resetFields();
     }
   }
   @override

@@ -7,7 +7,6 @@ import '../models/bus_schedule.dart';
 import '../models/bus_route.dart';
 import '../providers/app_data_provider.dart';
 import '../utils/constants.dart';
-import '../utils/helper_functions.dart';
 
 class AddSchedulePage extends StatefulWidget {
   const AddSchedulePage({Key? key}) : super(key: key);
@@ -26,138 +25,255 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
   final discountController = TextEditingController();
   final feeController = TextEditingController();
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Schedule'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Center(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            shrinkWrap: true,
-            children: [
-              Consumer<AppDataProvider>(
-                builder: (context, provider, child) => DropdownButtonFormField<Bus>(
-                  onChanged: (value) {
-                    setState(() {
-                      bus = value;
-                    });
-                  },
-                  isExpanded: true,
-                  value: bus,
-                  hint: const Text('Select Bus'),
-                  items: provider.busList
-                      .map((e) => DropdownMenuItem<Bus>(
-                    value: e,
-                    child: Text('${e.busName}-${e.busType}'),
-                  ))
-                      .toList(),
-                ),
-              ),
-              Consumer<AppDataProvider>(
-                builder: (context, provider, child) => DropdownButtonFormField<BusRoute>(
-                  onChanged: (value) {
-                    setState(() {
-                      busRoute = value;
-                    });
-                  },
-                  isExpanded: true,
-                  value: busRoute,
-                  hint: const Text('Select Route'),
-                  items: provider.routeList
-                      .map((e) => DropdownMenuItem<BusRoute>(
-                    value: e,
-                    child: Text(e.routeName),
-                  ))
-                      .toList(),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: priceController,
-                decoration: const InputDecoration(
-                  hintText: 'Ticket Price',
-                  filled: true,
-                  prefixIcon: Icon(Icons.price_change),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return emptyFieldErrMessage;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: discountController,
-                decoration: const InputDecoration(
-                  hintText: 'Discount(%)',
-                  filled: true,
-                  prefixIcon: Icon(Icons.discount),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return emptyFieldErrMessage;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: feeController,
-                decoration: const InputDecoration(
-                  hintText: 'Processing Fee',
-                  filled: true,
-                  prefixIcon: Icon(Icons.monetization_on_outlined),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return emptyFieldErrMessage;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: _selectTime,
-                    child: const Text('Select Departure Time'),
-                  ),
-                  Text(timeOfDay == null
-                      ? 'No time chosen'
-                      : getFormattedTime(timeOfDay!)),
-                ],
-              ),
-              Center(
-                child: SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
-                    onPressed: addSchedule,
-                    child: const Text('ADD Schedule'),
-                  ),
-                ),
-              ),
-            ],
-          ),
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      centerTitle: true,
+      title: const Text(
+        'Add Schedule',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
       ),
-    );
-  }
+    ),
+    body: Form(
+      key: _formKey,
+      child: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.schedule,
+                    size: 60,
+                    color: Colors.green,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    'Schedule Information',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Consumer<AppDataProvider>(
+                    builder: (context, provider, child) =>
+                        DropdownButtonFormField<Bus>(
+                      value: bus,
+                      isExpanded: true,
+                      borderRadius:
+                          BorderRadius.circular(15),
+                      decoration: InputDecoration(
+                        labelText: 'Bus',
+                        prefixIcon: const Icon(
+                          Icons.directions_bus_outlined,
+                        ),
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(15),
+                        ),
+                      ),
+                      hint: const Text('Select Bus'),
+                      items: provider.busList
+                          .map(
+                            (e) => DropdownMenuItem<Bus>(
+                              value: e,
+                              child: Text(
+                                '${e.busName} (${e.busType})',
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          bus = value;
+                        });
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Consumer<AppDataProvider>(
+                    builder: (context, provider, child) =>
+                        DropdownButtonFormField<BusRoute>(
+                      value: busRoute,
+                      isExpanded: true,
+                      borderRadius:
+                          BorderRadius.circular(15),
+                      decoration: InputDecoration(
+                        labelText: 'Route',
+                        prefixIcon: const Icon(
+                          Icons.route_outlined,
+                        ),
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(15),
+                        ),
+                      ),
+                      hint: const Text('Select Route'),
+                      items: provider.routeList
+                          .map(
+                            (e) =>
+                                DropdownMenuItem<BusRoute>(
+                              value: e,
+                              child: Text(e.routeName),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          busRoute = value;
+                        });
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: priceController,
+                    keyboardType:
+                        TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Ticket Price',
+                      prefixIcon: const Icon(
+                        Icons.price_change_outlined,
+                      ),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty) {
+                        return emptyFieldErrMessage;
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                      ),
+                      borderRadius:
+                          BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time,
+                            color: Colors.green,
+                          ),
+                      
+                          const SizedBox(width: 12),
+                      
+                          Expanded(
+                            child: Text(
+                              timeOfDay == null
+                                  ? 'No departure time selected'
+                                  : getFormattedTime(
+                                      timeOfDay!,
+                                    ),
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                      
+                          ElevatedButton(
+                            onPressed: _selectTime,
+                            style:
+                                ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.green,
+                              foregroundColor:
+                                  Colors.white,
+                            ),
+                            child: const Text(
+                              'Select',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton.icon(
+                      onPressed: addSchedule,
+                      icon: const Icon(
+                        Icons.add_circle_outline,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        'ADD SCHEDULE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+                      style:
+                          ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.green,
+                        foregroundColor:
+                            Colors.white,
+                        shape:
+                            RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(
+                            15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   void addSchedule() {
     if (_formKey.currentState!.validate()) {
