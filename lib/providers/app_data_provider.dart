@@ -10,10 +10,11 @@ import 'package:flutter/material.dart';
 
 class AppDataProvider extends ChangeNotifier{
   final DataSource _dataSource = DummyDataSource();
-  final List<Bus> _busList = [];
-  final List<BusRoute> _routeList = [];
+  List<Bus> _busList = [];
+  List<BusRoute> _routeList = [];
   List<BusReservation> _reservationList = [];
   List<BusSchedule> _scheduleList = [];
+
   List<BusSchedule> get scheduleList => _scheduleList;
   List<Bus> get busList => _busList;
   List<BusRoute> get routeList => _routeList;
@@ -60,4 +61,32 @@ class AppDataProvider extends ChangeNotifier{
     _reservationList = await _dataSource.getAllReservation();
     notifyListeners();
   }
+
+  Future<ResponseModel> addBus(Bus bus) {
+    return _dataSource.addBus(bus);
+  }
+
+  Future<ResponseModel> addRoute(BusRoute busRoute) {
+    return _dataSource.addRoute(busRoute);
+  }
+
+  Future<ResponseModel> addSchedule(BusSchedule busSchedule) {
+    return _dataSource.addSchedule(busSchedule);
+  }
+
+  void getAllBus() async{
+    _busList = await _dataSource.getAllBus();
+    notifyListeners();
+  }
+
+  void getAllRoutes() async{
+    _routeList = await _dataSource.getAllRoutes();
+    notifyListeners();
+  }
+
+  void getAllSchedules() async{
+    _scheduleList = await _dataSource.getAllSchedules();
+    notifyListeners();
+  }
+
 }

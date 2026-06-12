@@ -24,7 +24,19 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
   final priceController = TextEditingController();
   final discountController = TextEditingController();
   final feeController = TextEditingController();
+
   @override
+  void didChangeDependencies() {
+    _getdata();
+    super.didChangeDependencies();
+    }
+
+  void _getdata() async {
+    Provider.of<AppDataProvider>(context, listen: false).getAllBus();
+    Provider.of<AppDataProvider>(context, listen: false).getAllRoutes();
+    Provider.of<AppDataProvider>(context, listen: false).getAllSchedules();
+  }
+
   @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -74,7 +86,7 @@ Widget build(BuildContext context) {
                   Consumer<AppDataProvider>(
                     builder: (context, provider, child) =>
                         DropdownButtonFormField<Bus>(
-                      value: bus,
+                      initialValue: bus,
                       isExpanded: true,
                       borderRadius:
                           BorderRadius.circular(15),
@@ -113,7 +125,7 @@ Widget build(BuildContext context) {
                   Consumer<AppDataProvider>(
                     builder: (context, provider, child) =>
                         DropdownButtonFormField<BusRoute>(
-                      value: busRoute,
+                      initialValue: busRoute,
                       isExpanded: true,
                       borderRadius:
                           BorderRadius.circular(15),
@@ -286,6 +298,26 @@ Widget build(BuildContext context) {
         discount: int.parse(discountController.text),
         processingFee: int.parse(feeController.text),
       );
+      Provider.of<AppDataProvider>(context, listen: false)
+          .addSchedule(schedule)
+          .then((response) {
+        if (response.responseStatus == ResponseStatus.SAVED) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Schedule added successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          resetFields();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to add schedule'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      });
     }
   }
 

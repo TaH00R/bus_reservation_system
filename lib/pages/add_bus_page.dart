@@ -1,5 +1,7 @@
 import 'package:bus_reservation_system/datasource/temp_db.dart';
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/bus_model.dart';
 import '../utils/constants.dart';
@@ -46,6 +48,7 @@ Widget build(BuildContext context) {
                 children: [
                   const Icon(
                     Icons.directions_bus_rounded,
+                    color: Colors.green,
                     size: 60,
                   ),
 
@@ -211,8 +214,19 @@ Widget build(BuildContext context) {
         totalSeat: int.parse(seatController.text),
       );
 
-      TempDB.tableBus.add(bus);
-      resetFields();
+      Provider.of<AppDataProvider>(context, listen: false).addBus(bus)
+      .then((response){
+        if(response.responseStatus == ResponseStatus.SAVED){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message))
+          );
+          resetFields(); }
+          else{
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to add bus'))
+            );
+          }
+      });
     }
   }
 

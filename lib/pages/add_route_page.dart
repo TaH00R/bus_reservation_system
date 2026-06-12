@@ -1,6 +1,8 @@
 import 'package:bus_reservation_system/datasource/temp_db.dart';
 import 'package:bus_reservation_system/models/bus_route.dart';
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/constants.dart';
 
 class AddRoutePage extends StatefulWidget {
@@ -62,7 +64,7 @@ Widget build(BuildContext context) {
                   const SizedBox(height: 24),
 
                   DropdownButtonFormField<String>(
-                    value: from,
+                    initialValue: from,
                     isExpanded: true,
                     borderRadius: BorderRadius.circular(15),
                     decoration: InputDecoration(
@@ -209,8 +211,19 @@ Widget build(BuildContext context) {
         cityTo: to!,
         distanceInKm: double.parse(distanceController.text),
       );
-      TempDB.tableRoute.add(route);
-      resetFields();
+      Provider.of<AppDataProvider>(context, listen: false).addRoute(route).
+      then((response){
+        if(response.responseStatus == ResponseStatus.SAVED){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message))
+          );
+          resetFields();
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to add route'))
+          );
+        }
+      });
     }
   }
   @override
