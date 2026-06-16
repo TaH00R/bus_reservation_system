@@ -1,4 +1,4 @@
-package com.example.reservationsystem.repos.impl;
+package com.example.reservationsystem.services.impl;
 
 import com.example.reservationsystem.entities.Bus;
 import com.example.reservationsystem.repos.BusRepository;

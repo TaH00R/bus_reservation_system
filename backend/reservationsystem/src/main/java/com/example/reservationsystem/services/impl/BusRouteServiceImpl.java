@@ -1,4 +1,4 @@
-package com.example.reservationsystem.repos.impl;
+package com.example.reservationsystem.services.impl;
 
 import com.example.reservationsystem.entities.BusRoute;
 import com.example.reservationsystem.models.ReservationApiException;
