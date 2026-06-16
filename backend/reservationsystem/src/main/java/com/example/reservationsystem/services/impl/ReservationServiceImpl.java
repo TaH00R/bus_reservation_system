@@ -10,10 +10,12 @@ import com.example.reservationsystem.repos.ReservationRepository;
 import com.example.reservationsystem.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class ReservationServiceImpl extends ReservationService {
+@Service
+public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 

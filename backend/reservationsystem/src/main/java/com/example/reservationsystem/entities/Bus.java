@@ -8,14 +8,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-@Entity (name = "bus") //Create Table in Database
+@Entity
+@Table(name = "bus") //Create Table in Database
 
 public class Bus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long busId;
-    
+
     private String busName;
     private String busType;
     private Integer totalSeat;
