@@ -2,7 +2,6 @@ package com.example.reservationsystem.controllers;
 
 import com.example.reservationsystem.entities.BusSchedule;
 import com.example.reservationsystem.models.ResponseModel;
-import com.example.reservationsystem.repos.BusScheduleRepository;
 import com.example.reservationsystem.services.BusScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
