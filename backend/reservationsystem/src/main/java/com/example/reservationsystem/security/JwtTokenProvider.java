@@ -25,39 +25,46 @@ public class JwtTokenProvider {
 
     public String generateToken(Authentication authentication){
         String username = authentication.getName();
-
         Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + expiration);
+        Date expireDate = new Date(new Date().getTime() + expiration);
 
-        return Jwts.builder()
-                .subject(username)
+        return Jwts.builder().
+                subject(username)
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .signWith(key())
                 .compact();
     }
 
-    public boolean validateToken(String token){
+    public String getUsername(String token){
+        Claims claims = Jwts.parser()
+                .verifyWith(key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
+    }
+
+    public boolean validateToken(String Token){
         try{
             Jwts.parser()
                     .verifyWith(key())
                     .build()
-                    .parseSignedClaims(token);
-
-            return true;
-
+                    .parseSignedClaims(Token);
+        return true;
         } catch (MalformedJwtException e) {
             throw new ReservationApiException(HttpStatus.BAD_REQUEST, "Invalid Token");
         } catch (ExpiredJwtException e) {
             throw new ReservationApiException(HttpStatus.BAD_REQUEST, "Token Expired");
-        } catch (UnsupportedJwtException e) {
+        }catch (UnsupportedJwtException e) {
             throw new ReservationApiException(HttpStatus.BAD_REQUEST, "Unsupported Token");
-        } catch (IllegalArgumentException e) {
+        }catch (IllegalArgumentException e) {
             throw new ReservationApiException(HttpStatus.BAD_REQUEST, "Invalid Argument");
         }
     }
 
-    private SecretKey key(){
+    private SecretKey key() {
         return Keys.hmacShaKeyFor(
                 Decoders.BASE64.decode(jwtSecretKey)
         );
