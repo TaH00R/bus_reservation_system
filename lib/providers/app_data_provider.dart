@@ -1,5 +1,8 @@
+import 'package:bus_reservation_system/datasource/app_data_source.dart';
 import 'package:bus_reservation_system/datasource/data_source.dart';
 import 'package:bus_reservation_system/datasource/dummy_data_source.dart';
+import 'package:bus_reservation_system/models/app_user.dart';
+import 'package:bus_reservation_system/models/auth_response_model.dart';
 import 'package:bus_reservation_system/models/bus_model.dart';
 import 'package:bus_reservation_system/models/bus_reservation.dart';
 import 'package:bus_reservation_system/models/bus_route.dart';
@@ -9,7 +12,7 @@ import 'package:bus_reservation_system/models/response_model.dart';
 import 'package:flutter/material.dart';
 
 class AppDataProvider extends ChangeNotifier{
-  final DataSource _dataSource = DummyDataSource();
+  final DataSource _dataSource = AppDataSource();
   List<Bus> _busList = [];
   List<BusRoute> _routeList = [];
   List<BusReservation> _reservationList = [];
@@ -87,6 +90,10 @@ class AppDataProvider extends ChangeNotifier{
   void getAllSchedules() async{
     _scheduleList = await _dataSource.getAllSchedules();
     notifyListeners();
+  }
+
+  Future<AuthResponseModel?> login(AppUser user){
+    return _dataSource.login(user);
   }
 
 }
