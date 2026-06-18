@@ -14,7 +14,7 @@ class AppDataSource extends DataSource{
 
   Map<String, String> get header => {
     'Content-Type': 'application/json',
-  }
+  };
 
   @override
   Future<ResponseModel> addBus(Bus bus) {
@@ -103,6 +103,8 @@ class AppDataSource extends DataSource{
           body: json.encode(user.toJson()),
           );
           final map = json.decode(response.body);
+          final authResponseModel = AuthResponseModel.fromJson(map);
+          return authResponseModel;
         }catch(e){
           print('Login error: $e');
         }

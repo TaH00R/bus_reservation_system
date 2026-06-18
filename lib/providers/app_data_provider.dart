@@ -1,6 +1,5 @@
 import 'package:bus_reservation_system/datasource/app_data_source.dart';
 import 'package:bus_reservation_system/datasource/data_source.dart';
-import 'package:bus_reservation_system/datasource/dummy_data_source.dart';
 import 'package:bus_reservation_system/models/app_user.dart';
 import 'package:bus_reservation_system/models/auth_response_model.dart';
 import 'package:bus_reservation_system/models/bus_model.dart';
@@ -9,6 +8,7 @@ import 'package:bus_reservation_system/models/bus_route.dart';
 import 'package:bus_reservation_system/models/bus_schedule.dart';
 import 'package:bus_reservation_system/models/reservation_expansion_item.dart';
 import 'package:bus_reservation_system/models/response_model.dart';
+import 'package:bus_reservation_system/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 
 class AppDataProvider extends ChangeNotifier{
@@ -44,7 +44,7 @@ class AppDataProvider extends ChangeNotifier{
       final reservation = _reservationList[index];
       return ReservationExpansionItem(
         header: ReservationExpansionHeader(
-          reseervationId: reservation.reservationId,
+          reservationId: reservation.reservationId,
           departureDate: reservation.departureDate,
           schedule: reservation.busSchedule,
           timestamp: reservation.timestamp,
@@ -92,8 +92,13 @@ class AppDataProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<AuthResponseModel?> login(AppUser user){
-    return _dataSource.login(user);
+  Future<AuthResponseModel?> login(AppUser user) async{
+    final response = await  _dataSource.login(user);
+    if(response == null) return null;
+    await saveToken(response.accessToken);
+    await saveLoginTime(response.logInTime);
+    await saveExpirationDuration(response.expirationDuration);
+    return response;
   }
 
 }

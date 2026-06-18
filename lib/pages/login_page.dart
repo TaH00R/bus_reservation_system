@@ -1,4 +1,8 @@
+import 'package:bus_reservation_system/models/app_user.dart';
+import 'package:bus_reservation_system/providers/app_data_provider.dart';
+import 'package:bus_reservation_system/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -180,6 +184,15 @@ class _LoginPageState extends State<LoginPage> {
     if(_formKey.currentState!.validate()){
     final userName = _userNameController.text.trim();
     final password = _passwordController.text.trim();
+
+    final response = await Provider.of<AppDataProvider>(context, listen: false).
+    login(AppUser(userName: userName, password: password));
+    if(response != null){
+      showMessage(context, response.toString());
+      Navigator.pop(context);
+    }else{
+      showMessage(context, "Login failed.");
+    }
     }
   }
   

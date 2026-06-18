@@ -15,14 +15,14 @@ class ReservationExpansionItem {
 }
 
 class ReservationExpansionHeader {
-  int? reseervationId;
+  int? reservationId;
   String departureDate;
   BusSchedule schedule;
   int timestamp;
   String reservationStatus;
 
   ReservationExpansionHeader({
-    this.reseervationId,
+    this.reservationId,
     required this.departureDate,
     required this.schedule,
     required this.timestamp,
