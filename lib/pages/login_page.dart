@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
     final response = await Provider.of<AppDataProvider>(context, listen: false).
     login(AppUser(userName: userName, password: password));
     if(response != null){
-      showMessage(context, response.toString());
+      showMessage(context, response.message);
       Navigator.pop(context);
     }else{
       showMessage(context, "Login failed.");

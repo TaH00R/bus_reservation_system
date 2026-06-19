@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AppDataSource extends DataSource{
-  final String baseUrl = 'http://10.0.2.2:8080/api';
+final String baseUrl = 'http://192.168.31.138:8080/api/';
 
   Map<String, String> get header => {
     'Content-Type': 'application/json',
@@ -106,9 +106,9 @@ class AppDataSource extends DataSource{
           final authResponseModel = AuthResponseModel.fromJson(map);
           return authResponseModel;
         }catch(e){
-          print('Login error: $e');
+  print("Login error: $e");
+  return null;
         }
-        throw UnimplementedError();
   }
 
 }

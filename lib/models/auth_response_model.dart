@@ -18,7 +18,7 @@ class AuthResponseModel {
       statusCode: json['statusCode'],
       message: json['message'],
       accessToken: json['accessToken'],
-      logInTime: json['logInTime'],
+      logInTime: json['loginTime'],
       expirationDuration: json['expirationDuration'],
     );
   }
