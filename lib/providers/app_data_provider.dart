@@ -79,7 +79,6 @@ class AppDataProvider extends ChangeNotifier{
 
   Future<void> getAllBus() async{
     _busList = await _dataSource.getAllBus();
-    
     notifyListeners();
   }
 

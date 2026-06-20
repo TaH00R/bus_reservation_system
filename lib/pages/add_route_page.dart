@@ -1,5 +1,4 @@
 import 'package:bus_reservation_system/customwidgets/login_alert_dialog.dart';
-import 'package:bus_reservation_system/datasource/temp_db.dart';
 import 'package:bus_reservation_system/models/bus_route.dart';
 import 'package:bus_reservation_system/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';

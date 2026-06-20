@@ -19,11 +19,11 @@ public class BusSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "bus_bus_id")
     private Bus bus;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "bus_route_route_id")
     private BusRoute busRoute;
 

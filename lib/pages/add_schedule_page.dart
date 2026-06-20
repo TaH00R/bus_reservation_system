@@ -2,7 +2,6 @@ import 'package:bus_reservation_system/customwidgets/login_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../datasource/temp_db.dart';
 import '../models/bus_model.dart';
 import '../models/bus_schedule.dart';
 import '../models/bus_route.dart';
