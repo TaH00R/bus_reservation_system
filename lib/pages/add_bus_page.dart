@@ -1,4 +1,4 @@
-import 'package:bus_reservation_system/datasource/temp_db.dart';
+import 'package:bus_reservation_system/customwidgets/login_alert_dialog.dart';
 import 'package:bus_reservation_system/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -207,7 +207,7 @@ Widget build(BuildContext context) {
   void addBus() {
     if (_formKey.currentState!.validate()) {
       final bus = Bus(
-        busId: TempDB.tableBus.length + 1, // remove this line if you save into MySql DB
+        // busId: TempDB.tableBus.length + 1, // remove this line if you save into MySql DB
         busName: nameController.text,
         busNumber: numberController.text,
         busType: busType!,
@@ -216,24 +216,30 @@ Widget build(BuildContext context) {
 
       Provider.of<AppDataProvider>(context, listen: false).addBus(bus)
       .then((response){
-        if(response.responseStatus == ResponseStatus.SAVED){
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response.message))
-          );
-          resetFields(); }
-          else{
+          if(response.responseStatus == ResponseStatus.SAVED){
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to add bus'))
+              SnackBar(content: Text(response.message)) 
             );
-          }
-      });
+            resetFields(); }
+            else if (response.responseStatus == ResponseStatus.UNAUTHORIZED || response.responseStatus == ResponseStatus.EXPIRED) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Session expired. Please log in again.'))
+              );
+              ShowLoginAlertDialog();
+            } 
+            else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(response.message))
+              );
+            }
+        });
+      }
     }
-  }
 
-  void resetFields() {
-    numberController.clear();
-    seatController.clear();
-    nameController.clear();
+    void resetFields() {
+      numberController.clear();
+      seatController.clear();
+      nameController.clear();
   }
 
   @override

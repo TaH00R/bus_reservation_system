@@ -34,7 +34,7 @@ const cities = [
 ];
 
 enum ResponseStatus {
-  SAVED, FAILED, UNAUTHORIZED, AUTHORIZED, EXPIRED, NONE,
+  SAVED, FAILED, UNAUTHORIZED, AUTHORIZED, EXPIRED, NONE, ERROR,
 }
 
 const busTypes = [busTypeACBusiness, busTypeACEconomy, busTypeNonAc];

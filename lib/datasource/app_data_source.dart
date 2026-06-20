@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bus_reservation_system/datasource/data_source.dart';
 import 'package:bus_reservation_system/models/app_user.dart';
 import 'package:bus_reservation_system/models/auth_response_model.dart';
@@ -5,7 +7,10 @@ import 'package:bus_reservation_system/models/bus_model.dart';
 import 'package:bus_reservation_system/models/bus_reservation.dart';
 import 'package:bus_reservation_system/models/bus_route.dart';
 import 'package:bus_reservation_system/models/bus_schedule.dart';
+import 'package:bus_reservation_system/models/error_details_model.dart';
 import 'package:bus_reservation_system/models/response_model.dart';
+import 'package:bus_reservation_system/utils/constants.dart';
+import 'package:bus_reservation_system/utils/helper_functions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -15,10 +20,26 @@ final String baseUrl = 'http://192.168.31.138:8080/api/';
   Map<String, String> get header => {
     'Content-Type': 'application/json',
   };
+  Future<Map<String, String>> get authHeader async => {
+    'Content-Type': 'application/json',
+    HttpHeaders.authorizationHeader: 'Bearer ${await getToken()}',
+  };
 
   @override
-  Future<ResponseModel> addBus(Bus bus) {
-        throw UnimplementedError();
+  Future<ResponseModel> addBus(Bus bus) async {
+    final url = '$baseUrl${'bus/add'}';
+    try{
+      final response = await http.post(
+  Uri.parse(url),
+  headers: await authHeader,
+  body: json.encode(bus.toJson()),
+);
+return await _getResponseModel(response);
+    }
+    catch(e){
+      print("Add bus error: $e");
+      rethrow;
+    } 
   }
 
   @override
@@ -109,6 +130,42 @@ final String baseUrl = 'http://192.168.31.138:8080/api/';
   print("Login error: $e");
   return null;
         }
+  }
+  
+  Future<ResponseModel> _getResponseModel(http.Response response) async {
+    ResponseStatus status = ResponseStatus.NONE;
+    ResponseModel responseModel = ResponseModel();
+
+    if(response.statusCode == 200){
+      status = ResponseStatus.SAVED;
+      responseModel = ResponseModel.fromJson(json.decode(response.body));
+      responseModel = responseModel.copyWith(responseStatus: status);
+    }
+    else if (response.statusCode == 401 || response.statusCode == 403) {
+      if(await hasTokenExpired()) {
+        status = ResponseStatus.EXPIRED;
+      } else {
+        status = ResponseStatus.UNAUTHORIZED;
+      }
+      responseModel = ResponseModel(
+        responseStatus: status,
+        statusCode: response.statusCode,
+        message: 'Unauthorized access',
+        object: {},
+      );
+    }
+    else if(response.statusCode == 500 || response.statusCode == 400){
+      final json = jsonDecode(response.body);
+      final errorDetails = ErrorDetailsModel.fromJson(json);
+      status = ResponseStatus.FAILED;
+      responseModel = ResponseModel(
+        responseStatus: status,
+        statusCode: response.statusCode,
+        message: errorDetails.errorMessage,
+        object: {},
+      );
+    }
+    return responseModel;
   }
 
 }
