@@ -8,7 +8,7 @@ part 'bus_schedule.g.dart';
 
 
 @freezed
-class BusSchedule with _$BusSchedule {
+abstract class BusSchedule with _$BusSchedule {
   factory BusSchedule({
     int? scheduleId,
     required Bus bus,

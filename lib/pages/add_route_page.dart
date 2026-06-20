@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../utils/constants.dart';
 
 class AddRoutePage extends StatefulWidget {
-  const AddRoutePage({Key? key}) : super(key: key);
+  const AddRoutePage({super.key});
 
   @override
   State<AddRoutePage> createState() => _AddRoutePageState();
@@ -103,7 +103,7 @@ Widget build(BuildContext context) {
                   const SizedBox(height: 16),
 
                   DropdownButtonFormField<String>(
-                    value: to,
+                    initialValue: to,
                     isExpanded: true,
                     borderRadius: BorderRadius.circular(15),
                     decoration: InputDecoration(

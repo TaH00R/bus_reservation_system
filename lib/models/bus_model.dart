@@ -3,7 +3,7 @@ part 'bus_model.freezed.dart';
 part 'bus_model.g.dart';
 
 @freezed
-class Bus with _$Bus {
+abstract class Bus with _$Bus {
   factory Bus({
   int? busId,
   required String busName,

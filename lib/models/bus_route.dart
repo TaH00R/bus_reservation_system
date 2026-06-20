@@ -4,7 +4,7 @@ part 'bus_route.freezed.dart';
 part 'bus_route.g.dart';
 
 @freezed
-class BusRoute with _$BusRoute {
+abstract class BusRoute with _$BusRoute {
   factory BusRoute({
     int? routeId,
     required String routeName,

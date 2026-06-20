@@ -7,7 +7,7 @@ import '../models/bus_model.dart';
 import '../utils/constants.dart';
 
 class AddBusPage extends StatefulWidget {
-  const AddBusPage({Key? key}) : super(key: key);
+  const AddBusPage({super.key});
 
   @override
   State<AddBusPage> createState() => _AddBusPageState();
@@ -67,7 +67,7 @@ Widget build(BuildContext context) {
                   const SizedBox(height: 24),
 
                   DropdownButtonFormField<String>(
-                    value: busType,
+                    initialValue: busType,
                     isExpanded: true,
                     borderRadius: BorderRadius.circular(15),
                     decoration: InputDecoration(

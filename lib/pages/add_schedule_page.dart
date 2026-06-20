@@ -9,7 +9,7 @@ import '../providers/app_data_provider.dart';
 import '../utils/constants.dart';
 
 class AddSchedulePage extends StatefulWidget {
-  const AddSchedulePage({Key? key}) : super(key: key);
+  const AddSchedulePage({super.key});
 
   @override
   State<AddSchedulePage> createState() => _AddSchedulePageState();
@@ -295,8 +295,6 @@ Widget build(BuildContext context) {
         busRoute: busRoute!,
         departureTime: getFormattedTime(timeOfDay!),
         ticketPrice: int.parse(priceController.text),
-        discount: int.parse(discountController.text),
-        processingFee: int.parse(feeController.text),
       );
       Provider.of<AppDataProvider>(context, listen: false)
           .addSchedule(schedule)
