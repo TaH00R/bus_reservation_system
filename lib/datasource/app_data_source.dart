@@ -247,6 +247,7 @@ return await _getResponseModel(response);
       return [];
     }
     catch(e){
+      print("Get schedules by route name error: $e");
       return [];
     }
   }
