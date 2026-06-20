@@ -1,3 +1,4 @@
+import 'package:bus_reservation_system/customwidgets/login_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,11 +28,11 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
 
   @override
   void didChangeDependencies() {
-    _getdata();
+    _getData();
     super.didChangeDependencies();
     }
 
-  void _getdata() async {
+  void _getData() async {
     Provider.of<AppDataProvider>(context, listen: false).getAllBus();
     Provider.of<AppDataProvider>(context, listen: false).getAllRoutes();
     Provider.of<AppDataProvider>(context, listen: false).getAllSchedules();
@@ -290,7 +291,7 @@ Widget build(BuildContext context) {
   void addSchedule() {
     if (_formKey.currentState!.validate()) {
       final schedule = BusSchedule(
-        scheduleId: TempDB.tableSchedule.length + 1,
+        // scheduleId: TempDB.tableSchedule.length + 1, // remove this line if you save into MySql DB
         bus: bus!,
         busRoute: busRoute!,
         departureTime: getFormattedTime(timeOfDay!),
@@ -307,10 +308,19 @@ Widget build(BuildContext context) {
             ),
           );
           resetFields();
-        } else {
+        } else if (response.responseStatus == ResponseStatus.UNAUTHORIZED ||
+            response.responseStatus == ResponseStatus.EXPIRED) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Failed to add schedule'),
+              content: Text('Session expired. Please log in again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          ShowLoginAlertDialog();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
               backgroundColor: Colors.red,
             ),
           );

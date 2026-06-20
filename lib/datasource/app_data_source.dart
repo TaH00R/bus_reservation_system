@@ -25,6 +25,13 @@ final String baseUrl = 'http://192.168.31.138:8080/api/';
     HttpHeaders.authorizationHeader: 'Bearer ${await getToken()}',
   };
 
+  
+  @override
+  Future<ResponseModel> addReservation(BusReservation reservation) {
+    // TODO: implement addReservation
+    throw UnimplementedError();
+  }
+
   @override
   Future<ResponseModel> addBus(Bus bus) async {
     final url = '$baseUrl${'bus/add'}';
@@ -42,28 +49,39 @@ return await _getResponseModel(response);
     } 
   }
 
+
   @override
-  Future<ResponseModel> addReservation(BusReservation reservation) {
-    // TODO: implement addReservation
-    throw UnimplementedError();
+  Future<ResponseModel> addRoute(BusRoute busRoute) async {
+    final url = '$baseUrl${'route/add'}';
+    try{
+      final response = await http.post(
+  Uri.parse(url),
+  headers: await authHeader,
+  body: json.encode(busRoute.toJson()),
+);
+return await _getResponseModel(response);
+    }
+    catch(e){
+      print("Add route error: $e");
+      rethrow;
+    } 
   }
 
   @override
-  Future<ResponseModel> addRoute(BusRoute busRoute) {
-    // TODO: implement addRoute
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<ResponseModel> addSchedule(BusSchedule busSchedule) {
-    // TODO: implement addSchedule
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<Bus>> getAllBus() {
-    // TODO: implement getAllBus
-    throw UnimplementedError();
+  Future<ResponseModel> addSchedule(BusSchedule busSchedule) async {
+    final url = '$baseUrl${'schedule/add'}';
+    try{
+      final response = await http.post(
+  Uri.parse(url),
+  headers: await authHeader,
+  body: json.encode(busSchedule.toJson()),
+);
+return await _getResponseModel(response);
+    }
+    catch(e){
+      print("Add schedule error: $e");
+      rethrow;
+    } 
   }
 
   @override
@@ -72,16 +90,57 @@ return await _getResponseModel(response);
     throw UnimplementedError();
   }
 
+
   @override
-  Future<List<BusRoute>> getAllRoutes() {
-    // TODO: implement getAllRoutes
-    throw UnimplementedError();
+  Future<List<Bus>> getAllBus() async {
+    final url = '$baseUrl${'bus/all'}';
+    try{
+      final response = await http.get(Uri.parse(url), headers: await authHeader);
+      if(response.statusCode == 200){
+        final mapList = json.decode(response.body) as List;
+        return List.generate(mapList.length, (index)=> Bus.fromJson(mapList[index]));
+      }
+      return [];
+    }
+    catch(e){
+      print("Get all bus error: $e");
+      rethrow;
+    }
+  }
+
+
+  @override
+  Future<List<BusRoute>> getAllRoutes() async {
+    final url = '$baseUrl${'route/all'}';
+    try{
+      final response = await http.get(Uri.parse(url), headers: await authHeader);
+      if(response.statusCode == 200){
+        final mapList = json.decode(response.body) as List;
+        return List.generate(mapList.length, (index)=> BusRoute.fromJson(mapList[index]));
+      }
+      return [];
+    }
+    catch(e){
+      print("Get all routes error: $e");
+      rethrow;
+    }
   }
 
   @override
-  Future<List<BusSchedule>> getAllSchedules() {
-    // TODO: implement getAllSchedules
-    throw UnimplementedError();
+  Future<List<BusSchedule>> getAllSchedules() async {
+    final url = '$baseUrl${'schedule/all'}';
+    try{
+      final response = await http.get(Uri.parse(url), headers: await authHeader);
+      if(response.statusCode == 200){
+        final mapList = json.decode(response.body) as List;
+        return List.generate(mapList.length, (index)=> BusSchedule.fromJson(mapList[index]));
+      }
+      return [];
+    }
+    catch(e){
+      print("Get all schedules error: $e");
+      rethrow;
+    }
   }
 
   @override

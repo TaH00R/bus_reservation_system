@@ -77,17 +77,18 @@ class AppDataProvider extends ChangeNotifier{
     return _dataSource.addSchedule(busSchedule);
   }
 
-  void getAllBus() async{
+  Future<void> getAllBus() async{
     _busList = await _dataSource.getAllBus();
+    
     notifyListeners();
   }
 
-  void getAllRoutes() async{
+  Future<void> getAllRoutes() async{
     _routeList = await _dataSource.getAllRoutes();
     notifyListeners();
   }
 
-  void getAllSchedules() async{
+  Future<void> getAllSchedules() async{
     _scheduleList = await _dataSource.getAllSchedules();
     notifyListeners();
   }
